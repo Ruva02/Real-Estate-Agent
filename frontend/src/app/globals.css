@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+:root {
+    --background: #020617;
+    --foreground: #f8fafc;
+    --primary: #10b981;
+    /* Emerald */
+    --primary-glow: rgba(16, 185, 129, 0.4);
+    --secondary: #1e293b;
+    --accent: #f59e0b;
+    /* Amber */
+    --haven-gradient: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+    --emerald-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+body {
+    background: var(--haven-gradient);
+    color: var(--foreground);
+    font-family: var(--font-inter), sans-serif;
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+.serif {
+    font-family: var(--font-playfair), serif;
+}
+
+.glass-morphism {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.chat-bubble-user {
+    background: var(--emerald-gradient);
+    color: white;
+    border-radius: 20px 20px 4px 20px;
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.chat-bubble-agent {
+    background: rgba(30, 41, 59, 0.5);
+    color: var(--foreground);
+    border-radius: 20px 20px 20px 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.property-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.property-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+.scroll-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.animate-reveal {
+    animation: reveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes reveal {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
