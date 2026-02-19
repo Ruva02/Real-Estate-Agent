@@ -15,9 +15,9 @@ from routes.chat_routes import chat_bp
 def create_app():
     app = Flask(__name__)
     
-    # Enable CORS for frontend (Vercel + local dev)
+    # Enable CORS for frontend (any Vercel deployment + local dev)
     CORS(app, origins=[
-        "https://real-estate-agent-y38p.vercel.app",
+        r"https://.*\.vercel\.app",
         "http://localhost:3000",
         "http://localhost:3001"
     ], supports_credentials=True)
