@@ -1,0 +1,12 @@
+flask
+flask-cors
+python-dotenv
+pymongo
+certifi
+langchain-google-genai
+langchain
+langchain-core
+google-generativeai
+bcrypt
+PyJWT
+waitress
