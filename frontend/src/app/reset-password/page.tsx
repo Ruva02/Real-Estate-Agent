@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Home, Mail, Lock, Key, ArrowRight, Loader, ShieldCheck, ChevronLeft } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5016';
+
 export default function ResetPasswordPage() {
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
@@ -33,7 +35,7 @@ export default function ResetPasswordPage() {
         }
 
         try {
-            const response = await fetch('http://localhost:5016/auth/reset-password', {
+            const response = await fetch(`${API_URL}/auth/reset-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp, new_password: newPassword })

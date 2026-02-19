@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Home, User, Mail, Lock, ArrowRight, Loader, ShieldCheck, MapPin, Phone } from 'lucide-react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5016';
+
 export default function RegisterPage() {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -22,7 +24,7 @@ export default function RegisterPage() {
         setSuccess("");
 
         try {
-            const response = await fetch('http://localhost:5016/auth/register', {
+            const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, phone, email, city, password })

@@ -15,8 +15,12 @@ from routes.chat_routes import chat_bp
 def create_app():
     app = Flask(__name__)
     
-    # Enable CORS for frontend
-    CORS(app)
+    # Enable CORS for frontend (Vercel + local dev)
+    CORS(app, origins=[
+        "https://real-estate-agent-y38p.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3001"
+    ], supports_credentials=True)
 
     # Start Mongo connection
     get_db()

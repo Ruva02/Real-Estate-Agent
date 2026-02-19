@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Message, Property } from '../types';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5016';
+
 export const useChat = (token: string | null, handleLogout: () => void) => {
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -29,7 +31,7 @@ export const useChat = (token: string | null, handleLogout: () => void) => {
         if (!refreshToken) return null;
 
         try {
-            const response = await fetch('http://localhost:5016/auth/refresh', {
+            const response = await fetch(`${API_URL}/auth/refresh`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refresh_token: refreshToken })
@@ -63,7 +65,7 @@ export const useChat = (token: string | null, handleLogout: () => void) => {
         setIsLoading(true);
 
         const performChatRequest = async (currentToken: string | null) => {
-            const response = await fetch('http://localhost:5016/chat', {
+            const response = await fetch(`${API_URL}/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +77,7 @@ export const useChat = (token: string | null, handleLogout: () => void) => {
             if (response.status === 401) {
                 const refreshedToken = await refreshAccessToken();
                 if (refreshedToken) {
-                    return fetch('http://localhost:5016/chat', {
+                    return fetch(`${API_URL}/chat`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
