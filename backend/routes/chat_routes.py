@@ -1,14 +1,9 @@
 from flask import Blueprint, request, jsonify
 from services.llm import (
-    llm, 
-    llm_with_tools, 
-    search_properties, 
-    chat_history, 
-    extract_text, 
+    process_chat_message,
     parse_analysis
 )
 from services.user_service import log_inquiry
-from langchain_core.messages import HumanMessage, ToolMessage
 from utils.auth_middleware import token_required
 
 chat_bp = Blueprint("chat", __name__)
@@ -25,39 +20,73 @@ def chat():
     try:
         user_email = request.user.get("email", "unknown")
         
-        # Single LLM call for response (now contains structured analysis)
-        chat_history.append(HumanMessage(content=message))
-        response = llm_with_tools.invoke(chat_history)
+        # New Process using CrewAI
+        response_text = process_chat_message(user_email, message)
         
-        raw_text = extract_text(response.content)
-        analysis_data = parse_analysis(raw_text)
+        analysis_data = parse_analysis(response_text)
         
+        # Extract properties before cleaning the text
+        import json
+        import re
+        properties = []
+        
+        # Robust extraction: find the first block that looks like a JSON array
+        import json
+        
+        def extract_json_array(text):
+            # Find all potential arrays [...]
+            potential_arrays = re.findall(r"(\[[\s\S]*?\])", text)
+            for pot in potential_arrays:
+                try:
+                    data = json.loads(pot)
+                    if isinstance(data, list):
+                        return data
+                except:
+                    continue
+            return []
+
+        properties = extract_json_array(response_text)
+        
+        # Fallback for the "results" object format if used
+        if not properties:
+            results_match = re.search(r"\{\s*\"results\"\s*:\s*(\[[\s\S]*?\])\s*\}", response_text)
+            if results_match:
+                try:
+                    properties = json.loads(results_match.group(1))
+                except:
+                    pass
+
         # Log inquiry using parsed data
         log_inquiry(user_email, message, analysis_data)
         
         # Helper to clean response for the user
         def clean_output(text):
-            import re
-            return re.sub(r"<analysis>.*?</analysis>", "", text, flags=re.DOTALL).strip()
+            if not text: return ""
+            # 1. Strip everything from <analysis> onwards
+            idx = text.find("<analysis>")
+            if idx != -1:
+                text = text[:idx]
+            
+            # 2. Aggressively remove anything that looks like JSON or tool headers
+            text = re.sub(r"MANDATORY_JSON_RESULTS:.*", "", text)
+            text = re.sub(r"```json[\s\S]*?```", "", text)
+            text = re.sub(r"\[\s*\{\s*\"[\s\S]*?\}\s*\]", "", text) # Remove raw arrays
+            
+            return text.strip()
 
-        if response.tool_calls:
-            for tool_call in response.tool_calls:
-                if tool_call["name"] == "search_properties":
-                    args = tool_call["args"]
-                    result = search_properties.invoke(args)
-                    
-                    chat_history.append(response)
-                    chat_history.append(ToolMessage(content=result, tool_call_id=tool_call["id"]))
-                    
-                    final_response = llm.invoke(chat_history)
-                    chat_history.append(final_response)
-                    
-                    final_text = extract_text(final_response.content)
-                    return jsonify({"response": clean_output(final_text)})
+        final_text = clean_output(response_text)
         
-        chat_history.append(response)
-        return jsonify({"response": clean_output(raw_text)})
+        return jsonify({
+            "response": final_text or "I've found some options for you.",
+            "properties": properties
+        })
         
     except Exception as e:
+        err_str = str(e).lower()
+        if "rate_limit" in err_str or "limit reached" in err_str or "429" in err_str:
+            return jsonify({
+                "response": "Great things take time! I've briefly reached my limit. Please try again in 30 seconds.",
+                "properties": []
+            })
         print(f"Error in chat: {e}")
         return jsonify({"error": str(e)}), 500

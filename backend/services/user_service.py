@@ -54,9 +54,12 @@ def log_inquiry(email, message, analysis_data):
         "email": email,
         "message": message,
         "category": category,
+        "urgency": analysis_data.get("urgency", "Low"),
         "location": analysis_data.get("location"),
         "budget": parsed_budget,
         "bhk": analysis_data.get("bhk"),
+        "ids": analysis_data.get("ids", []),
+        "dates": analysis_data.get("dates", []),
         "timestamp": datetime.utcnow()
     }
     

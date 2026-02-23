@@ -119,27 +119,14 @@ export const useChat = (token: string | null, handleLogout: () => void) => {
                 return;
             }
 
-            // Extract properties from AI response if present
-            let cleanText = data.response;
-            let extractedProps: Property[] = [];
-
-            try {
-                // Match JSON array, including optional markdown code fences
-                const jsonBlockRegex = /(?:```json\s*)?(\[[\s\S]*?\])(?:\s*```)?/s;
-                const match = data.response.match(jsonBlockRegex);
-
-                if (match) {
-                    extractedProps = JSON.parse(match[1]);
-                    cleanText = data.response.replace(match[0], "").trim();
-                }
-            } catch (e) {
-                console.error("Failed to parse properties from response", e);
-            }
+            // Directly use structured properties from backend
+            const cleanText = data.response;
+            const extractedProps: Property[] = data.properties || [];
 
             const agentMsg: Message = {
                 id: (Date.now() + 1).toString(),
                 type: 'agent',
-                text: cleanText || "I've found some options for you.",
+                text: cleanText,
                 timestamp: new Date(),
                 properties: extractedProps.length > 0 ? extractedProps : undefined
             };

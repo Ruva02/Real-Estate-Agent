@@ -10,3 +10,4 @@ google-generativeai
 bcrypt
 PyJWT
 waitress
+crewai

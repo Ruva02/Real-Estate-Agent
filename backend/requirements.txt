@@ -3,10 +3,12 @@ flask-cors
 python-dotenv
 pymongo
 certifi
-langchain-google-genai
+langchain-groq
 langchain
 langchain-core
-google-generativeai
+# google-generativeai removed
 bcrypt
 PyJWT
 waitress
+crewai
+litellm

@@ -7,7 +7,7 @@ from models.user_model import create_user, get_user_by_email, verify_password, h
 from utils.token_utils import generate_access_token, generate_refresh_token
 from utils.validators import require_fields, valid_email, valid_password
 from services.db import get_db
-from services.email import send_otp_email
+from services.email_service import send_otp_email
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 

@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, ShieldCheck, MapPin, Send, Lock } from 'lucide-react';
+import { MessageSquare, ShieldCheck, MapPin, Send, Lock, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useChat } from '../hooks/useChat';
+import PropertyDetailsModal from './PropertyDetailsModal';
+import { Property } from '../types';
 
 interface ChatInterfaceProps {
     token: string | null;
@@ -20,6 +22,7 @@ export const ChatInterface = ({ token, handleLogout }: ChatInterfaceProps) => {
         handleSendMessage,
         scrollRef
     } = useChat(token, handleLogout);
+    const [selectedProperty, setSelectedProperty] = React.useState<Property | null>(null);
 
     return (
         <section id="ai-chat" className="w-full max-w-4xl px-6 py-24">
@@ -62,12 +65,29 @@ export const ChatInterface = ({ token, handleLogout }: ChatInterfaceProps) => {
                                     {msg.properties && (
                                         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {msg.properties.map((prop, idx) => (
-                                                <div key={idx} className="bg-slate-950/40 rounded-xl p-4 border border-white/5">
-                                                    <h4 className="font-bold text-emerald-400 mb-1">{prop.title}</h4>
+                                                <div
+                                                    key={idx}
+                                                    className="bg-slate-950/40 rounded-xl p-4 border border-white/5 hover:border-emerald-500/50 transition-all cursor-pointer group relative overflow-hidden"
+                                                    onClick={() => setSelectedProperty(prop)}
+                                                >
+                                                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <ExternalLink className="w-4 h-4 text-emerald-500" />
+                                                    </div>
+                                                    <h4 className="font-bold text-emerald-400 mb-1 leading-tight pr-4">{prop.title || "Elite Property"}</h4>
                                                     <p className="text-xs text-slate-400 flex items-center gap-1 mb-2">
-                                                        <MapPin className="w-3 h-3" /> {prop.location}
+                                                        <MapPin className="w-3 h-3" /> {prop.location || (prop as any).address || (prop as any).city || "Location on Request"}
                                                     </p>
-                                                    <p className="text-sm font-bold text-white">${prop.price.toLocaleString()}</p>
+                                                    <p className="text-sm font-bold text-white tracking-widest">
+                                                        {typeof prop.price === 'number'
+                                                            ? `$${prop.price.toLocaleString()}`
+                                                            : (prop as any).rent
+                                                                ? `$${(prop as any).rent.toLocaleString()}`
+                                                                : (prop as any).rent_amount
+                                                                    ? `$${(prop as any).rent_amount.toLocaleString()}`
+                                                                    : (prop as any).price_amount
+                                                                        ? `$${(prop as any).price_amount.toLocaleString()}`
+                                                                        : "Price on Request"}
+                                                    </p>
                                                 </div>
                                             ))}
                                         </div>
@@ -124,6 +144,11 @@ export const ChatInterface = ({ token, handleLogout }: ChatInterfaceProps) => {
                     </div>
                 </div>
             </div>
+
+            <PropertyDetailsModal
+                property={selectedProperty}
+                onClose={() => setSelectedProperty(null)}
+            />
         </section>
     );
 };
