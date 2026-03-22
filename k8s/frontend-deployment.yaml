@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haven-ai-frontend
+  labels:
+    app: haven-ai-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haven-ai-frontend
+  template:
+    metadata:
+      labels:
+        app: haven-ai-frontend
+    spec:
+      containers:
+      - name: frontend
+        # Note: In a real CI/CD, this image tag is updated dynamically
+        image: your-dockerhub-username/haven-ai-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_BASE_URL
+          value: "http://localhost:5016" # Requires updating to backend public IP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haven-frontend-service
+spec:
+  # Using LoadBalancer so K3s exposes it on the host IP
+  type: LoadBalancer
+  selector:
+    app: haven-ai-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000

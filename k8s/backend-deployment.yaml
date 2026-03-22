@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haven-ai-backend
+  labels:
+    app: haven-ai-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haven-ai-backend
+  template:
+    metadata:
+      labels:
+        app: haven-ai-backend
+    spec:
+      containers:
+      - name: backend
+        # Note: In a real CI/CD, this image tag is updated dynamically
+        image: your-dockerhub-username/haven-ai-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5016
+        envFrom:
+        - secretRef:
+            name: backend-secrets
+            optional: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haven-backend-service
+spec:
+  # Using LoadBalancer so K3s exposes it on the host IP
+  type: LoadBalancer
+  selector:
+    app: haven-ai-backend
+  ports:
+    - protocol: TCP
+      port: 5016
+      targetPort: 5016
