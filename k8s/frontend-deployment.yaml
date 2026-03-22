@@ -23,7 +23,7 @@ spec:
         - containerPort: 3000
         env:
         - name: NEXT_PUBLIC_API_BASE_URL
-          value: "http://localhost:5016" # Requires updating to backend public IP
+          value: "http://13.127.66.114:5016"
 ---
 apiVersion: v1
 kind: Service
