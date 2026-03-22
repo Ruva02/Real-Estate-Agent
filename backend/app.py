@@ -19,7 +19,8 @@ def create_app():
     CORS(app, origins=[
         r"https://.*\.vercel\.app",
         "http://localhost:3000",
-        "http://localhost:3001"
+        "http://localhost:3001",
+        "http://13.127.66.114"
     ], supports_credentials=True)
 
     # Start Mongo connection
