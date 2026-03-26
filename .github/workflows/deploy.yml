@@ -42,7 +42,7 @@ jobs:
           push: true
           tags: ${{ env.FRONTEND_IMAGE }}:latest,${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
           build-args: |
-            NEXT_PUBLIC_API_URL=http://13.127.66.114:5016
+            NEXT_PUBLIC_API_URL=http://52.66.79.240:5016
 
   deploy-to-k8s:
     needs: build-and-push
