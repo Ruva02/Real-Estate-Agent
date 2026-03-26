@@ -59,8 +59,8 @@ jobs:
         run: |
           cd k8s
           # Since we are using standard deployment yamls, we can use sed to update the image tag to the unique git sha
-          sed -i "s|image: your-dockerhub-username/haven-ai-backend:latest|image: $BACKEND_IMAGE:${{ github.sha }}|g" backend-deployment.yaml
-          sed -i "s|image: your-dockerhub-username/haven-ai-frontend:latest|image: $FRONTEND_IMAGE:${{ github.sha }}|g" frontend-deployment.yaml
+          sed -i "s|image: ruva02/haven-ai-backend:latest|image: $BACKEND_IMAGE:${{ github.sha }}|g" backend-deployment.yaml
+          sed -i "s|image: ruva02/haven-ai-frontend:latest|image: $FRONTEND_IMAGE:${{ github.sha }}|g" frontend-deployment.yaml
 
       - name: Deploy to AWS Kubernetes
         uses: azure/k8s-set-context@v3
