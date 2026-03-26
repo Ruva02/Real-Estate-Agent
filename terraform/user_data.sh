@@ -24,7 +24,8 @@ usermod -aG docker ubuntu
 
 # Install lightweight Kubernetes (K3s)
 # Note: K3s includes kubectl natively
-curl -sfL https://get.k3s.io | sh -
+# Update: Added --tls-san for external kubectl access via public IP
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--tls-san $(curl -s http://checkip.amazonaws.com)" sh -
 
 # K3s setup for the default 'ubuntu' user so we can connect to cluster
 mkdir -p /home/ubuntu/.kube
