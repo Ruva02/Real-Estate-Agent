@@ -15,12 +15,13 @@ from routes.chat_routes import chat_bp
 def create_app():
     app = Flask(__name__)
     
-    # Enable CORS for frontend (any Vercel deployment + local dev)
+    # Enable CORS for frontend (any Vercel deployment + local dev + new EC2)
     CORS(app, origins=[
         r"https://.*\.vercel\.app",
         "http://localhost:3000",
         "http://localhost:3001",
-        "http://13.127.66.114"
+        "http://52.66.79.240",
+        "http://52.66.79.240:3000"
     ], supports_credentials=True)
 
     # Start Mongo connection
